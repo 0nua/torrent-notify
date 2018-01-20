@@ -1,0 +1,3 @@
+#!/bin/bash
+
+docker run -it -v /c/Users/User/Projects/torrent-notify/:/var/www/torrent-notify torrent-notify /bin/bash
