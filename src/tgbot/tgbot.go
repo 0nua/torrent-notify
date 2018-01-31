@@ -4,33 +4,47 @@ import (
 	"log"
 	"gopkg.in/telegram-bot-api.v4"
 	"config"
+	"db"
+	"strconv"
 )
 
 func Init() {
+	waitForNumber := false
 	bot, err := tgbotapi.NewBotAPI(config.GetToken())
 	if err != nil {
 		log.Panic(err)
 	}
-
-	bot.Debug = true
-
 	log.Printf("Authorized on account %s", bot.Self.UserName)
 
-	u := tgbotapi.NewUpdate(0)
-	u.Timeout = 60
+	updateConfig := tgbotapi.NewUpdate(0)
+	updateConfig.Timeout = 60
+	updatesChain, err := bot.GetUpdatesChan(updateConfig)
+	if err != nil {
+		log.Panic(err)
+	}
 
-	updates, err := bot.GetUpdatesChan(u)
-
-	for update := range updates {
+	for update := range updatesChain {
 		if update.Message == nil {
 			continue
 		}
 
-		log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
+		text := update.Message.Text;
 
-		msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
-		msg.ReplyToMessageID = update.Message.MessageID
+		if waitForNumber {
+			topicId, err := strconv.Atoi(update.Message.Text)
+			if err != nil {
+				log.Panic(err)
+			}
+			db.AddTopic(update.Message.From.ID, topicId)
+			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Подписал Вас на топик #" + update.Message.Text)
+			bot.Send(msg)
+		}
 
-		bot.Send(msg)
+
+		if text == "/subscribe" {
+			waitForNumber = true;
+			msg:= tgbotapi.NewMessage(update.Message.Chat.ID, "Жду номер топика!")
+			bot.Send(msg)
+		}
 	}
 }
