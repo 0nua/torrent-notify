@@ -1,8 +1,8 @@
 package db
 
 import (
+	"error"
 	"io/ioutil"
-	"log"
 	"encoding/json"
 	"config"
 )
@@ -32,9 +32,7 @@ func AddTopic(userId int, topicId int) bool {
 
 func getDB() DB {
 	jsonString, err := ioutil.ReadFile(config.GetDB())
-	if err != nil {
-		log.Panic(err)
-	}
+	error.Check(err)
 
 	db := DB{}
 	json.Unmarshal(jsonString, db)
@@ -43,9 +41,7 @@ func getDB() DB {
 
 func saveDB(db DB) bool {
 	jsonString, err := json.Marshal(db)
-	if err != nil {
-		log.Panic(err)
-	}
+	error.Check(err)
 
 	return ioutil.WriteFile(config.GetDB(), jsonString, 755) == nil
 }

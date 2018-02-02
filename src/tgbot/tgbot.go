@@ -1,7 +1,7 @@
 package tgbot
 
 import (
-	"log"
+	"error"
 	"gopkg.in/telegram-bot-api.v4"
 	"config"
 	"db"
@@ -11,17 +11,12 @@ import (
 func Init() {
 	waitForNumber := false
 	bot, err := tgbotapi.NewBotAPI(config.GetToken())
-	if err != nil {
-		log.Panic(err)
-	}
-	log.Printf("Authorized on account %s", bot.Self.UserName)
+	error.Check(err)
 
 	updateConfig := tgbotapi.NewUpdate(0)
 	updateConfig.Timeout = 60
 	updatesChain, err := bot.GetUpdatesChan(updateConfig)
-	if err != nil {
-		log.Panic(err)
-	}
+	error.Check(err)
 
 	for update := range updatesChain {
 		if update.Message == nil {
@@ -32,9 +27,7 @@ func Init() {
 
 		if waitForNumber {
 			topicId, err := strconv.Atoi(update.Message.Text)
-			if err != nil {
-				log.Panic(err)
-			}
+			error.Check(err)
 			db.AddTopic(update.Message.From.ID, topicId)
 			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Подписал Вас на топик #" + update.Message.Text)
 			bot.Send(msg)

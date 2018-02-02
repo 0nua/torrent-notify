@@ -1,14 +1,11 @@
 package config
 
-var config = map[string]string {
-	"token": "483400559:AAFf-QjzbN-svlQmVpUIrFvW6oe4TA9wI0k",
-	"db": "db/users.json",
-}
+import "os"
 
 func GetToken() string {
-	return config["token"]
+	return os.Getenv("TG_BOT_TOKEN")
 }
 
 func GetDB() string {
-	return config["db"]
+	return os.Getenv("DB_PATH")
 }
