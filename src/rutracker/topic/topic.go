@@ -22,3 +22,20 @@ func GetList(userId int) []int {
 	}
 	return data
 }
+
+func Delete(userId int, topicId int) bool {
+	data, isset := db.GetData(userId)
+	if !isset {
+		return true
+	}
+
+	newData := []int{}
+	for _, value := range data {
+		if value == topicId {
+			continue
+		}
+		newData = append(newData, value)
+	}
+
+	return db.SetData(userId, newData)
+}

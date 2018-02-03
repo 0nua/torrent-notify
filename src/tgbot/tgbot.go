@@ -12,14 +12,15 @@ import (
 
 const TOPIC_COMMAND = "/topic"
 const GET_COMMAND = "/list"
+const DELETE_COMMAND = "/delete"
 
-var subscribe = make(map[int]bool)
+var command = make(map[int]string)
 
 type Dialog struct {
-	ChatId int64
-	UserId int
-	Text   string
-	IsWait bool
+	ChatId  int64
+	UserId  int
+	Text    string
+	Command string
 }
 
 func Init() {
@@ -41,18 +42,28 @@ func topicSaver(bot tgbotapi.BotAPI) {
 
 		dialog := assembleUpdate(update)
 
-		if dialog.IsWait == true {
+		if dialog.Command != "" {
 			topicId, err := strconv.Atoi(dialog.Text)
 			error.Catch(err)
-			topic.Add(dialog.UserId, topicId)
-			sendMessage(bot, "Подписал Вас на топик #" + dialog.Text, dialog)
-			subscribe[dialog.UserId] = false
+			message := "Подписал Вас на топик #" + dialog.Text
+			switch dialog.Command {
+			case TOPIC_COMMAND:
+				topic.Add(dialog.UserId, topicId)
+
+				break
+			case DELETE_COMMAND:
+				topic.Delete(dialog.UserId, topicId)
+				message =  "Отписал Вас от топика #" + dialog.Text
+				break
+			}
+			sendMessage(bot, message, dialog)
+			delete(command, dialog.UserId)
 			continue
 		}
 
-		if dialog.Text == TOPIC_COMMAND {
+		if dialog.Text == TOPIC_COMMAND || dialog.Text == DELETE_COMMAND {
 			sendMessage(bot, "Жду номер топика", dialog)
-			subscribe[dialog.UserId] = true
+			command[dialog.UserId] = dialog.Text
 			continue
 		}
 
@@ -74,7 +85,13 @@ func assembleUpdate(update tgbotapi.Update) Dialog {
 	dialog.ChatId = update.Message.Chat.ID
 	dialog.UserId = update.Message.From.ID
 	dialog.Text = update.Message.Text
-	dialog.IsWait = subscribe[dialog.UserId]
+
+	command, isset := command[dialog.UserId]
+	if isset {
+		dialog.Command = command
+	} else {
+		dialog.Command = ""
+	}
 
 	return *dialog
 }

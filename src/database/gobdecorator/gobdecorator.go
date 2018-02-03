@@ -5,10 +5,6 @@ import (
 )
 
 func Save(data map[int][]int) bool {
-	savedData := Get();
-	if savedData != nil {
-		data = merge(savedData, data)
-	}
 	return gob.Write(data)
 }
 
