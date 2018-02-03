@@ -53,7 +53,7 @@ func topicSaver(bot tgbotapi.BotAPI) {
 				break
 			case DELETE_COMMAND:
 				topic.Delete(dialog.UserId, topicId)
-				message =  "Отписал Вас от топика #" + dialog.Text
+				message = "Отписал Вас от топика #" + dialog.Text
 				break
 			}
 			sendMessage(bot, message, dialog)
