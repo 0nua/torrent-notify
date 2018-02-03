@@ -1,8 +1,10 @@
 package error
 
-import "log"
+import (
+	"log"
+)
 
-func Check(err error) {
+func Catch(err error) {
 	if err == nil {
 		return
 	}

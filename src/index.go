@@ -1,13 +1,12 @@
 package main
 
 import (
-	"error"
 	"tgbot"
-	"github.com/joho/godotenv"
+	"config"
 )
 
 func main() {
-	err := godotenv.Load(".env");
-	error.Check(err)
-	tgbot.Init()
+	if (config.IsLoaded()) {
+		tgbot.Init()
+	}
 }
