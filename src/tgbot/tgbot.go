@@ -48,8 +48,8 @@ func topicSaver(bot tgbotapi.BotAPI) {
 			message := "Подписал Вас на топик #" + dialog.Text
 			switch dialog.Command {
 			case TOPIC_COMMAND:
-				topic.Add(dialog.UserId, topicId)
-
+				name := topic.Add(dialog.UserId, topicId)
+				message = message + " (" + name + ")"
 				break
 			case DELETE_COMMAND:
 				topic.Delete(dialog.UserId, topicId)

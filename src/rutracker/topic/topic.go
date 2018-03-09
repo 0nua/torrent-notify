@@ -2,17 +2,23 @@ package topic
 
 import (
 	"database/db"
+	"fmt"
+	"rutracker/topicData"
 )
 
-func Add(userId int, topicId int) bool {
+func Add(userId int, topicId int) string {
 	userTopics, isset := db.GetData(userId)
 	if isset == false {
-		userTopics = []int{topicId}
-	} else {
-		userTopics = append(userTopics, topicId)
+		userTopics = map[int]int{}
 	}
 
-	return db.SetData(userId, userTopics);
+	userTopics[topicId] = topicData.GetSize(topicId)
+
+	fmt.Println(userTopics)
+
+	db.SetData(userId, userTopics);
+
+	return topicData.GetName(topicId)
 }
 
 func GetList(userId int) []int {
@@ -20,7 +26,7 @@ func GetList(userId int) []int {
 	if !isset {
 		return []int{}
 	}
-	return data
+	return convert(data)
 }
 
 func Delete(userId int, topicId int) bool {
@@ -29,13 +35,22 @@ func Delete(userId int, topicId int) bool {
 		return true
 	}
 
-	newData := []int{}
-	for _, value := range data {
-		if value == topicId {
+	newData := map[int]int{}
+	for id, updated := range data {
+		if id == topicId {
 			continue
 		}
-		newData = append(newData, value)
+		newData[id] = updated
 	}
 
 	return db.SetData(userId, newData)
 }
+
+func convert(data map[int]int) []int {
+	conveted := []int{}
+	for id := range data {
+		conveted = append(conveted, id)
+	}
+	return conveted
+}
+

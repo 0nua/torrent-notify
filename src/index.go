@@ -6,7 +6,9 @@ import (
 )
 
 func main() {
-	if (config.IsLoaded()) {
-		tgbot.Init()
+	if (!config.IsLoaded()) {
+		return
 	}
+	tgbot.Init()
+
 }

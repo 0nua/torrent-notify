@@ -7,7 +7,7 @@ import (
 )
 
 type Buffer struct {
-	Data     map[int][]int
+	Data     map[int]map[int]int
 	SaveTime time.Time
 }
 
@@ -26,12 +26,12 @@ func flushBuffer(buffer *Buffer) bool {
 	return result;
 }
 
-func GetData(userId int) ([]int, bool) {
+func GetData(userId int) (map[int]int, bool) {
 	data, isset := buffer.Data[userId]
 	return data, isset
 }
 
-func SetData(userId int, data []int) bool {
+func SetData(userId int, data map[int]int) bool {
 	buffer.Data[userId] = data;
 	processFlushing()
 	return true;

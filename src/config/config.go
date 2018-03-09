@@ -30,6 +30,10 @@ func GetSaveTimeout() float64 {
 	return timeout
 }
 
+func GetRutrackerApi() string {
+	return os.Getenv("RUTRACKER_API")
+}
+
 func initConfig() bool {
 	err := godotenv.Load(".env")
 	return err == nil;
