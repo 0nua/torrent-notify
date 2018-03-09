@@ -2,24 +2,46 @@ package topicData
 
 import (
 	"rutracker/rutrackerClient"
+	"strconv"
+	"fmt"
 )
 
-var data map[string]interface{} = nil
+const METHOD_GET_TOPIC_DATA = "get_tor_topic_data"
+
+var topicData = map[int]TopicData{}
+
+type TopicData struct {
+	Size int
+	Topic_title string
+}
 
 func GetSize(topicId int) int {
-	topic := getData(topicId)
-	return int(topic["size"].(float64))
+	return getData(topicId).Size
 }
 
 func GetName(topicId int) string {
-	topic := getData(topicId)
-	return topic["topic_title"].(string)
+	return  getData(topicId).Topic_title
 }
 
-func getData(topicId int) map[string]interface{} {
-	if (data == nil) {
-		data = rutrackerClient.GetTopicData(topicId)
+func getData(topicId int) TopicData {
+	if data, isset := topicData[topicId]; isset {
+		return data
 	}
 
-	return data
+	topicData[topicId] = getTopicData(topicId)
+	return topicData[topicId]
+}
+
+func getTopicData(topicId int) TopicData {
+	fmt.Println("Fetchig json")
+	result := rutrackerClient.Request(METHOD_GET_TOPIC_DATA, topicId)
+	data := result[strconv.Itoa(topicId)].(map[string]interface{})
+	return convertData(data)
+}
+
+func convertData(data map[string]interface{}) TopicData {
+	return TopicData{
+		Size: int(data["size"].(float64)),
+		Topic_title: data["topic_title"].(string),
+	}
 }

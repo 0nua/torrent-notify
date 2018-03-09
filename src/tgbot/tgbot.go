@@ -1,7 +1,7 @@
 package tgbot
 
 import (
-	"error"
+	"fail"
 	"gopkg.in/telegram-bot-api.v4"
 	"config"
 	"strconv"
@@ -25,7 +25,7 @@ type Dialog struct {
 
 func Init() {
 	bot, err := tgbotapi.NewBotAPI(config.GetToken())
-	error.Catch(err)
+	fail.Catch(err)
 	topicSaver(*bot)
 }
 
@@ -33,7 +33,7 @@ func topicSaver(bot tgbotapi.BotAPI) {
 	updateConfig := tgbotapi.NewUpdate(0)
 	updateConfig.Timeout = 60
 	updatesChain, err := bot.GetUpdatesChan(updateConfig)
-	error.Catch(err)
+	fail.Catch(err)
 
 	for update := range updatesChain {
 		if update.Message == nil {
@@ -44,7 +44,7 @@ func topicSaver(bot tgbotapi.BotAPI) {
 
 		if dialog.Command != "" {
 			topicId, err := strconv.Atoi(dialog.Text)
-			error.Catch(err)
+			fail.Catch(err)
 			message := "Подписал Вас на топик #" + dialog.Text
 			switch dialog.Command {
 			case TOPIC_COMMAND:

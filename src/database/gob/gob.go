@@ -4,12 +4,12 @@ import (
 	"os"
 	"encoding/gob"
 	"config"
-	"error"
+	"fail"
 )
 
 func Write(data map[int]map[int]int) bool {
 	file, err := os.Create(config.GetDB())
-	error.Catch(err)
+	fail.Catch(err)
 	err = gob.NewEncoder(file).Encode(data)
 	file.Close()
 

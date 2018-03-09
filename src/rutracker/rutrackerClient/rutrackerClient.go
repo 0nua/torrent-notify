@@ -3,19 +3,35 @@ package rutrackerClient
 import (
 	"config"
 	"strings"
-	"strconv"
 	"net/http"
-	"log"
 	"io/ioutil"
 	"encoding/json"
+	"fail"
+	"strconv"
 )
 
-const METHOD_GET_TOPIC_DATA = "get_tor_topic_data"
+const PARAM_BY = "by"
+const PARAM_VAL = "val"
 
-func GetTopicData(topicId int) map[string]interface{} {
-	key := strconv.Itoa(topicId)
-	result := request(METHOD_GET_TOPIC_DATA, prepareParams(key))
-	return result[key].(map[string]interface{})
+type jsonObject struct {
+	Result map[string]interface{} `json:"result"`
+}
+
+func Request(method string, topicId int) map[string]interface{} {
+	url := getUrl(method, prepareParams(strconv.Itoa(topicId)))
+
+	response, err := http.Get(url)
+	fail.Catch(err)
+
+	body, readErr := ioutil.ReadAll(response.Body)
+	fail.Catch(readErr)
+	response.Body.Close()
+
+	jsonObject := jsonObject{}
+	jsonErr := json.Unmarshal(body, &jsonObject)
+	fail.Catch(jsonErr)
+
+	return jsonObject.Result
 }
 
 func getUrl(method string, params map[string]string) string {
@@ -28,41 +44,17 @@ func getUrl(method string, params map[string]string) string {
 }
 
 func parseParams(params map[string]string) string {
-	tmpParams := []string{}
+	items := []string{}
 	for name, value := range params {
-		tmpParams = append(tmpParams, name + "=" + value)
+		items = append(items, name + "=" + value)
 	}
 
-	return "?" + strings.Join(tmpParams, "&")
+	return "?" + strings.Join(items, "&")
 }
 
 func prepareParams(topicId string) map[string]string {
-	params := map[string]string{}
-	params["by"] = "topic_id"
-	params["val"] = topicId
-
-	return params
-}
-
-func request(method string, params map[string]string) map[string]interface{} {
-	url := getUrl(method, params)
-	response, err := http.Get(url)
-	if err != nil {
-		log.Fatal(err)
+	return map[string]string{
+		PARAM_BY: "topic_id",
+		PARAM_VAL: topicId,
 	}
-
-	body, readErr := ioutil.ReadAll(response.Body)
-	if (readErr != nil) {
-		log.Fatal(readErr)
-	}
-
-	jsonObject := map[string]interface{}{}
-	jsonErr := json.Unmarshal(body, &jsonObject)
-	if jsonErr != nil {
-		log.Fatal(jsonErr)
-	}
-
-	response.Body.Close()
-
-	return jsonObject["result"].(map[string]interface{})
 }

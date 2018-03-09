@@ -3,7 +3,7 @@ package config
 import (
 	"os"
 	"strconv"
-	"error"
+	"fail"
 	"path/filepath"
 	"github.com/joho/godotenv"
 )
@@ -20,13 +20,13 @@ func GetToken() string {
 
 func GetDB() string {
 	path, err := filepath.Abs(os.Getenv("DB_PATH"))
-	error.Catch(err)
+	fail.Catch(err)
 	return path
 }
 
 func GetSaveTimeout() float64 {
 	timeout, err := strconv.ParseFloat(os.Getenv("SAVE_TIMEOUT"), 64)
-	error.Catch(err)
+	fail.Catch(err)
 	return timeout
 }
 
