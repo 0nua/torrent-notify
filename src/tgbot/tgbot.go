@@ -10,9 +10,9 @@ import (
 	"rutracker/topic"
 )
 
-const TOPIC_COMMAND = "/topic"
-const GET_COMMAND = "/list"
-const DELETE_COMMAND = "/delete"
+const TOPIC_COMMAND = "topic"
+const GET_COMMAND = "list"
+const DELETE_COMMAND = "delete"
 
 var command = make(map[int]string)
 
@@ -65,20 +65,22 @@ func topicSaver(bot tgbotapi.BotAPI) {
 			continue
 		}
 
-		if dialog.Text == TOPIC_COMMAND || dialog.Text == DELETE_COMMAND {
-			sendMessage(bot, "Жду номер топика", dialog)
-			command[dialog.UserId] = dialog.Text
-			continue
-		}
 
-		if dialog.Text == GET_COMMAND {
-			message := strings.Trim(
-				strings.Join(
-					strings.Split(
-						fmt.Sprint(
-							topic.GetList(dialog.UserId)), " "), ","), "[]")
-			sendMessage(bot, message, dialog)
-			continue
+		if update.Message.IsCommand() {
+			switch update.Message.Command() {
+			case TOPIC_COMMAND, DELETE_COMMAND:
+				sendMessage(bot, "Жду номер топика", dialog)
+				command[dialog.UserId] = update.Message.Command()
+				break
+			case GET_COMMAND:
+				message := strings.Trim(
+					strings.Join(
+						strings.Split(
+							fmt.Sprint(
+								topic.GetList(dialog.UserId)), " "), ","), "[]")
+				sendMessage(bot, message, dialog)
+				break
+			}
 		}
 	}
 }
