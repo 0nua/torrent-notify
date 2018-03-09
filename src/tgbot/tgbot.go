@@ -13,6 +13,7 @@ import (
 const TOPIC_COMMAND = "topic"
 const GET_COMMAND = "list"
 const DELETE_COMMAND = "delete"
+const START_COMMAND = "start"
 
 var command = make(map[int]string)
 
@@ -65,7 +66,6 @@ func topicSaver(bot tgbotapi.BotAPI) {
 			continue
 		}
 
-
 		if update.Message.IsCommand() {
 			switch update.Message.Command() {
 			case TOPIC_COMMAND, DELETE_COMMAND:
@@ -80,6 +80,15 @@ func topicSaver(bot tgbotapi.BotAPI) {
 								topic.GetList(dialog.UserId)), " "), ","), "[]")
 				sendMessage(bot, message, dialog)
 				break
+			case START_COMMAND:
+				msg := tgbotapi.NewMessage(dialog.ChatId, "Hello")
+				msg.ReplyMarkup = tgbotapi.NewInlineKeyboardMarkup(
+					tgbotapi.NewInlineKeyboardRow(
+						tgbotapi.NewInlineKeyboardButtonData("Удалить", "/delete"),
+						tgbotapi.NewInlineKeyboardButtonData("Список", "/list"),
+					),
+				)
+				bot.Send(msg)
 			}
 		}
 	}

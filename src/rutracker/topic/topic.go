@@ -11,7 +11,7 @@ func Add(userId int, topicId int) string {
 		userTopics = map[int]int{}
 	}
 
-	size := topicData.GetSize(topicId)
+	size := topicData.GetSize(topicId, false)
 	if size != 0 {
 		userTopics[topicId] = size
 		db.SetData(userId, userTopics);

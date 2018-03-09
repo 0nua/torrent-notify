@@ -14,16 +14,16 @@ type TopicData struct {
 	Topic_title string
 }
 
-func GetSize(topicId int) int {
-	return getData(topicId).Size
+func GetSize(topicId int, fresh bool) int {
+	return getData(topicId, fresh).Size
 }
 
 func GetName(topicId int) string {
-	return getData(topicId).Topic_title
+	return getData(topicId, false).Topic_title
 }
 
-func getData(topicId int) TopicData {
-	if data, exist := topicData[topicId]; exist {
+func getData(topicId int, fresh bool) TopicData {
+	if data, exist := topicData[topicId]; exist && !fresh {
 		if (data.Size != 0) {
 			return data
 		}
