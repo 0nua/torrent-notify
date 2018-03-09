@@ -49,7 +49,11 @@ func topicSaver(bot tgbotapi.BotAPI) {
 			switch dialog.Command {
 			case TOPIC_COMMAND:
 				name := topic.Add(dialog.UserId, topicId)
-				message = message + " (" + name + ")"
+				if (name != "") {
+					message = message + " (" + name + ")"
+				} else {
+					message = "Такого топика не существует!"
+				}
 				break
 			case DELETE_COMMAND:
 				topic.Delete(dialog.UserId, topicId)

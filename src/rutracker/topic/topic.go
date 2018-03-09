@@ -2,7 +2,6 @@ package topic
 
 import (
 	"database/db"
-	"fmt"
 	"rutracker/topicData"
 )
 
@@ -12,11 +11,11 @@ func Add(userId int, topicId int) string {
 		userTopics = map[int]int{}
 	}
 
-	userTopics[topicId] = topicData.GetSize(topicId)
-
-	fmt.Println(userTopics)
-
-	db.SetData(userId, userTopics);
+	size := topicData.GetSize(topicId)
+	if size != 0 {
+		userTopics[topicId] = size
+		db.SetData(userId, userTopics);
+	}
 
 	return topicData.GetName(topicId)
 }

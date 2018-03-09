@@ -3,7 +3,6 @@ package topicData
 import (
 	"rutracker/rutrackerClient"
 	"strconv"
-	"fmt"
 )
 
 const METHOD_GET_TOPIC_DATA = "get_tor_topic_data"
@@ -20,22 +19,27 @@ func GetSize(topicId int) int {
 }
 
 func GetName(topicId int) string {
-	return  getData(topicId).Topic_title
+	return getData(topicId).Topic_title
 }
 
 func getData(topicId int) TopicData {
-	if data, isset := topicData[topicId]; isset {
-		return data
+	if data, exist := topicData[topicId]; exist {
+		if (data.Size != 0) {
+			return data
+		}
 	}
 
-	topicData[topicId] = getTopicData(topicId)
-	return topicData[topicId]
+	return getTopicData(topicId);
 }
 
 func getTopicData(topicId int) TopicData {
-	fmt.Println("Fetchig json")
 	result := rutrackerClient.Request(METHOD_GET_TOPIC_DATA, topicId)
-	data := result[strconv.Itoa(topicId)].(map[string]interface{})
+
+	key := strconv.Itoa(topicId)
+	if (result[key] == nil) {
+		return TopicData{}
+	}
+	data := result[key].(map[string]interface{})
 	return convertData(data)
 }
 
