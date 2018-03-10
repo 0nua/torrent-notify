@@ -37,6 +37,10 @@ func SetData(userId int, data map[int]int) bool {
 	return true;
 }
 
+func Get() map[int]map[int]int {
+	return buffer.Data
+}
+
 func processFlushing() {
 	diff := time.Now().Sub(buffer.SaveTime)
 	if diff.Seconds() > config.GetSaveTimeout() {
