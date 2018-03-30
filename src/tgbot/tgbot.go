@@ -5,7 +5,6 @@ import (
 	"gopkg.in/telegram-bot-api.v4"
 	"config"
 	"strconv"
-	"fmt"
 	"strings"
 	"rutracker/topic"
 	"rutracker/checker"
@@ -136,11 +135,7 @@ func doBotCommand(botCommand string, bot tgbotapi.BotAPI, dialog Dialog) {
 		list := topic.GetList(dialog.UserId)
 		message := "Список пуст"
 		if len(list) != 0 {
-			message = strings.Trim(
-				strings.Join(
-					strings.Split(
-						fmt.Sprint(
-							topic.GetList(dialog.UserId)), " "), ","), "[]")
+			message = strings.Trim(strings.Join(topic.GetList(dialog.UserId), ""), "[]")
 		}
 
 		sendMessage(bot, message, dialog, KEYBOARD_MENU)
