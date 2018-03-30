@@ -4,7 +4,6 @@ import (
 	"database/db"
 	"rutracker/topicData"
 	"gopkg.in/telegram-bot-api.v4"
-	"fmt"
 	"time"
 	"rutracker/topic"
 )
@@ -15,7 +14,6 @@ func Run(bot tgbotapi.BotAPI) {
 		for userId, topics := range data {
 			for topicId, size := range topics {
 				newSize := topicData.GetSize(topicId, true)
-				fmt.Println(newSize, size, topicId)
 				if newSize > size {
 					msg := tgbotapi.NewMessage(int64(userId), topicData.GetName(topicId) + " обновлён!")
 					bot.Send(msg)
