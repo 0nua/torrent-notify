@@ -50,7 +50,7 @@ func convert(data map[int]int) []string {
 	conveted := []string{}
 	for id := range data {
 		name := topicData.GetName(id)
-		conveted = append(conveted, strconv.Itoa(id) + ": " + name[0:100] + "\n")
+		conveted = append(conveted, strconv.Itoa(id) + ": " + name[0:65] + "\n")
 	}
 	return conveted
 }

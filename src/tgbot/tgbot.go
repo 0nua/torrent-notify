@@ -135,7 +135,7 @@ func doBotCommand(botCommand string, bot tgbotapi.BotAPI, dialog Dialog) {
 		list := topic.GetList(dialog.UserId)
 		message := "Список пуст"
 		if len(list) != 0 {
-			message = strings.Trim(strings.Join(topic.GetList(dialog.UserId), ""), "[]")
+			message = strings.Trim(strings.Join(list, ""), "[]")
 		}
 
 		sendMessage(bot, message, dialog, KEYBOARD_MENU)
