@@ -3,6 +3,7 @@ package topic
 import (
 	"database/db"
 	"rutracker/topicData"
+	"strconv"
 )
 
 func Add(userId int, topicId int) string {
@@ -20,7 +21,7 @@ func Add(userId int, topicId int) string {
 	return topicData.GetName(topicId)
 }
 
-func GetList(userId int) []int {
+func GetList(userId int) []string {
 	data, isset := db.GetData(userId)
 	if !isset {
 		return []int{}
@@ -45,10 +46,11 @@ func Delete(userId int, topicId int) bool {
 	return db.SetData(userId, newData)
 }
 
-func convert(data map[int]int) []int {
-	conveted := []int{}
+func convert(data map[int]int) []string {
+	conveted := []string{}
 	for id := range data {
-		conveted = append(conveted, id)
+		name := topicData.GetName(id)
+		conveted = append(conveted, strconv.Itoa(id) + ": " + name + "\n")
 	}
 	return conveted
 }
