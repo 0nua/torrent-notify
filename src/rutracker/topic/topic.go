@@ -24,7 +24,7 @@ func Add(userId int, topicId int) string {
 func GetList(userId int) []string {
 	data, isset := db.GetData(userId)
 	if !isset {
-		return []int{}
+		return []string{}
 	}
 	return convert(data)
 }
