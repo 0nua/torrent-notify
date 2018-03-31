@@ -4,6 +4,7 @@ import (
 	"database/db"
 	"rutracker/topicData"
 	"strconv"
+	"strings"
 )
 
 func Add(userId int, topicId int) string {
@@ -51,7 +52,7 @@ func convert(data map[int]int) []string {
 	for id := range data {
 		name := topicData.GetName(id)
 		if (len(name) > 65) {
-			name = name[0:65]
+			name = strings.Split(name, "/")[0]
 		}
 		conveted = append(conveted, strconv.Itoa(id) + ": " + name + "\n")
 	}
