@@ -48,14 +48,11 @@ func Delete(userId int, topicId int) bool {
 }
 
 func convert(data map[int]int) []string {
-	conveted := []string{}
+	converted := []string{}
 	for id := range data {
-		name := topicData.GetName(id)
-		if (len(name) > 65) {
-			name = strings.Split(name, "/")[0]
-		}
-		conveted = append(conveted, strconv.Itoa(id) + ": " + name + "\n")
+		name := strings.Split(topicData.GetName(id), "/")[0]
+		converted = append(converted, strconv.Itoa(id) + ": " + name + "\n")
 	}
-	return conveted
+	return converted
 }
 
