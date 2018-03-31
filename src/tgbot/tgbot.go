@@ -86,8 +86,8 @@ func assembleUpdate(update tgbotapi.Update) (Dialog, bool) {
 	return *dialog, true
 }
 
-func sendMessage(bot tgbotapi.BotAPI, message string, dialog Dialog, keyboard string) {
-	msg := tgbotapi.NewMessage(dialog.ChatId, message)
+func SendMessage(bot tgbotapi.BotAPI, message string, chatId int64, keyboard string) {
+	msg := tgbotapi.NewMessage(chatId, message)
 	if keyboard != "" {
 		addKeyboard(&msg, keyboard)
 	}
@@ -129,7 +129,7 @@ func addKeyboard(msg *tgbotapi.MessageConfig, keyboard string) {
 func doBotCommand(botCommand string, bot tgbotapi.BotAPI, dialog Dialog) {
 	switch botCommand {
 	case TOPIC_COMMAND, DELETE_COMMAND:
-		sendMessage(bot, "Жду номер топика для " + botCommand, dialog, KEYBOARD_CANCEL)
+		SendMessage(bot, "Жду номер топика для " + botCommand, dialog.ChatId, KEYBOARD_CANCEL)
 		command[dialog.UserId] = botCommand
 	case GET_COMMAND:
 		list := topic.GetList(dialog.UserId)
@@ -138,13 +138,13 @@ func doBotCommand(botCommand string, bot tgbotapi.BotAPI, dialog Dialog) {
 			message = strings.Trim(strings.Join(list, ""), "[]")
 		}
 
-		sendMessage(bot, message, dialog, KEYBOARD_MENU)
+		SendMessage(bot, message, dialog.ChatId, KEYBOARD_MENU)
 	case START_COMMAND:
 		msg := tgbotapi.NewMessage(dialog.ChatId, "Добрый день, я готов уведомлять Вас о новых сериях сериалов")
 		addKeyboard(&msg, KEYBOARD_MENU)
 		bot.Send(msg)
 	case CANCEL_COMMAND:
-		sendMessage(bot, "Что-то пошло не так?! Давай ещё разок", dialog, KEYBOARD_MENU)
+		SendMessage(bot, "Что-то пошло не так?! Давай ещё разок", dialog.ChatId, KEYBOARD_MENU)
 	}
 }
 
@@ -171,6 +171,6 @@ func processDialogInput(bot tgbotapi.BotAPI, dialog Dialog) {
 		message = "Отписал Вас от топика #" + dialog.Text
 	}
 
-	sendMessage(bot, message, dialog, KEYBOARD_MENU)
+	SendMessage(bot, message, dialog.ChatId, KEYBOARD_MENU)
 	delete(command, dialog.UserId)
 }

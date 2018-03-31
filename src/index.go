@@ -10,5 +10,4 @@ func main() {
 		return
 	}
 	tgbot.Init()
-
 }

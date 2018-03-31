@@ -34,6 +34,12 @@ func GetRutrackerApi() string {
 	return os.Getenv("RUTRACKER_API")
 }
 
+func GetUpdateTimeout() int {
+	timeout, err := strconv.Atoi(os.Getenv("UPDATE_TIMEOUT"));
+	fail.Catch(err)
+	return timeout
+}
+
 func initConfig() bool {
 	err := godotenv.Load(".env")
 	return err == nil;
